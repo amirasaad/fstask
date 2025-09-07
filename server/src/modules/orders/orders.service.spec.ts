@@ -47,14 +47,14 @@ describe('OrdersService', () => {
 
     it('should delete order with refund and available balance', async () => {
       const mockOrder = { id: 1, store_id: 1, amount_cents: 100 };
-      const mockStore = { id: 1, balance: 100 };
+      const mockStore = { id: 1, balance_cents: 100 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       mockStoreRepository.findOneBy.mockResolvedValue(mockStore);
       const result = await service.cancelOrder(1, true);
       mockOrderRepository.delete.mockResolvedValue({ affected: 1, raw: {} });
       expect(mockOrderRepository.delete).toHaveBeenCalledWith({ id: 1 });
       expect(mockStoreRepository.update).toHaveBeenCalledWith(1, {
-        balance: mockStore.balance - mockOrder.amount_cents,
+        balance_cents: mockStore.balance_cents - mockOrder.amount_cents,
       });
       expect(mockStoreRepository.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockOrder);
@@ -62,7 +62,7 @@ describe('OrdersService', () => {
 
     it('should throw Insufficient balance error if store balance is not enough', async () => {
       const mockOrder = { id: 1, store_id: 1, amount_cents: 100 };
-      const mockStore = { id: 1, balance: 50 };
+      const mockStore = { id: 1, balance_cents: 50 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       mockStoreRepository.findOneBy.mockResolvedValue(mockStore);
       await expect(service.cancelOrder(1, true)).rejects.toThrow(

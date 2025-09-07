@@ -7,4 +7,7 @@ export class StoreEntity {
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
+
+  @Column({ type: 'int' })
+  balance_cents: number;
 }

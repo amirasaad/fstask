@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { OrderEntity } from '@/database/entities/order.entity';
+import { StoreEntity } from '@/database/entities/store.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -8,14 +9,36 @@ export class OrdersService {
   constructor(
     @InjectRepository(OrderEntity)
     private ordersRepository: Repository<OrderEntity>,
+    @InjectRepository(StoreEntity)
+    private storesRepository: Repository<StoreEntity>,
   ) {}
 
   listOrders(): Promise<OrderEntity[]> {
     return this.ordersRepository.find();
   }
 
-  cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
-    void refund;
-    return this.ordersRepository.findOneBy({ id });
+  async cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
+    const order = await this.ordersRepository.findOneBy({ id });
+    if (!order) {
+      throw new Error('Order not found');
+    }
+    if (refund) {
+      const store = await this.storesRepository.findOneBy({
+        id: order.store_id,
+      });
+      if (!store) {
+        throw new Error('Store not found');
+      }
+      if (store.balance_cents < order.amount_cents) {
+        throw new Error('Insufficient balance');
+      }
+      await this.ordersRepository.delete({ id });
+      await this.storesRepository.update(store.id, {
+        balance_cents: store.balance_cents - order.amount_cents,
+      });
+    }
+
+    await this.ordersRepository.delete({ id });
+    return order;
   }
 }

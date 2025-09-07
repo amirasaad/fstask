@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
+import { StoreEntity } from '@/database/entities/store.entity';
 import { OrderEntity } from '@/database/entities/order.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -10,7 +11,14 @@ describe('OrdersController', () => {
   const mockOrderRepository = {
     findOneBy: jest.fn(),
     find: jest.fn(),
+    delete: jest.fn(),
   };
+
+  const mockStoreRepository = {
+    findOneBy: jest.fn(),
+    update: jest.fn(),
+  };
+
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [OrdersController],
@@ -19,6 +27,10 @@ describe('OrdersController', () => {
         {
           provide: getRepositoryToken(OrderEntity),
           useValue: mockOrderRepository,
+        },
+        {
+          provide: getRepositoryToken(StoreEntity),
+          useValue: mockStoreRepository,
         },
       ],
     }).compile();
@@ -41,11 +53,12 @@ describe('OrdersController', () => {
     it('should return orders', async () => {
       expect(await ordersController.listOrders()).toHaveLength(3);
     });
-  });
 
-  describe('cancelOrder', () => {
-    it('should delete without refund', async () => {
-      expect(await ordersController.cancelOrder(1, { refund: false }));
+    describe('cancelOrder', () => {
+      it('should delete without refund', async () => {
+        mockOrderRepository.findOneBy.mockResolvedValue({ id: 1 });
+        expect(await ordersController.cancelOrder(1, { refund: false }));
+      });
     });
   });
 });
