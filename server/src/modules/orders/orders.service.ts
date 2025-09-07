@@ -14,9 +14,8 @@ export class OrdersService {
     return this.ordersRepository.find();
   }
 
-  cancelOrder(id: string, refund: boolean): Promise<OrderEntity> {
-    throw new Error(
-      `Delete order ${id} with refund ${refund ? 'true' : 'false'} Not implemented`,
-    );
+  cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
+    void refund;
+    return this.ordersRepository.findOneBy({ id });
   }
 }
