@@ -23,6 +23,8 @@ export class OrdersService {
   async cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
     const order = await this.ordersRepository.findOneBy({ id });
     if (!order) throw new Error('Order not found');
+    if (order.status === 'cancelled')
+      throw new Error('Order already cancelled');
 
     if (refund) {
       await this.processRefund(order);
