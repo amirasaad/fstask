@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderEntity } from '@/database/entities/order.entity';
+import { CustomerEntity } from '@/database/entities/customer.entity';
 import { StoreEntity } from '@/database/entities/store.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -16,6 +17,9 @@ describe('OrdersService', () => {
     findOneBy: jest.fn(),
     update: jest.fn(),
   };
+  const mockCustomerRepository = {
+    findOneBy: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,6 +28,10 @@ describe('OrdersService', () => {
         {
           provide: getRepositoryToken(OrderEntity),
           useValue: mockOrderRepository,
+        },
+        {
+          provide: getRepositoryToken(CustomerEntity),
+          useValue: mockCustomerRepository,
         },
         {
           provide: getRepositoryToken(StoreEntity),
