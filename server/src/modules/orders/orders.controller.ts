@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrderEntity } from '@/database/entities/order.entity';
 
@@ -12,7 +20,29 @@ export class OrdersController {
   }
 
   @Delete('orders/:id')
-  cancelOrder(@Param('id') id: number, @Body() body: { refund: boolean }) {
-    return this.ordersService.cancelOrder(id, body.refund);
+  async cancelOrder(
+    @Param('id') id: number,
+    @Body() body: { refund: boolean },
+  ) {
+    try {
+      await this.ordersService.cancelOrder(id, body.refund);
+    } catch (err: any) {
+      if (err instanceof Error) {
+        throw new HttpException(
+          {
+            message: err.message,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          {
+            cause: err,
+          },
+        );
+      } else {
+        // Handle cases where the thrown value is not an Error object
+        throw new HttpException({}, HttpStatus.INTERNAL_SERVER_ERROR, {
+          cause: 'unknown error',
+        });
+      }
+    }
   }
 }

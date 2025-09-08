@@ -60,7 +60,7 @@ describe('OrdersService', () => {
       const result = await service.cancelOrder(1, false);
       mockOrderRepository.update.mockResolvedValue({ affected: 1, raw: {} });
       expect(mockOrderRepository.update).toHaveBeenCalledWith(1, {
-        status: 'cancelled',
+        status: ORDER_STATUS_CANCELLED,
       });
       expect(result).toEqual(mockOrder);
     });
@@ -70,7 +70,7 @@ describe('OrdersService', () => {
         id: 1,
         store_id: 1,
         amount_cents: 100,
-        status: 'pendingPayment',
+        status: ORDER_STATUS_PENDING,
       };
       const mockStore = { id: 1, balance_cents: 100 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
@@ -92,7 +92,7 @@ describe('OrdersService', () => {
         id: 1,
         store_id: 1,
         amount_cents: 100,
-        status: 'pendingPayment',
+        status: ORDER_STATUS_PENDING,
       };
       const mockStore = { id: 1, balance_cents: 50 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);

@@ -5,6 +5,7 @@ import { StoreEntity } from '@/database/entities/store.entity';
 import { OrderEntity } from '@/database/entities/order.entity';
 import { CustomerEntity } from '@/database/entities/customer.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ORDER_STATUS_PENDING } from './constants';
 
 describe('OrdersController', () => {
   let ordersController: OrdersController;
@@ -66,7 +67,7 @@ describe('OrdersController', () => {
       it('should cancel without refund', async () => {
         mockOrderRepository.findOneBy.mockResolvedValue({
           id: 1,
-          status: 'pendingPayment',
+          status: ORDER_STATUS_PENDING,
         });
         expect(await ordersController.cancelOrder(1, { refund: false }));
       });
