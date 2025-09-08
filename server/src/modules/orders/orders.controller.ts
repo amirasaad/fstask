@@ -12,7 +12,7 @@ export class OrdersController {
   }
 
   @Delete('orders/:id')
-  cancelOrder(@Param('id') id: string, @Body() body: { refund: boolean }) {
+  cancelOrder(@Param('id') id: number, @Body() body: { refund: boolean }) {
     return this.ordersService.cancelOrder(id, body.refund);
   }
 }
