@@ -6,11 +6,13 @@ import {
   ORDER_STATUS_CANCELLED,
   ERROR_ORDER_NOT_FOUND,
   ERROR_ORDER_NOT_ELIGIBLE,
-  ERROR_STORE_NOT_FOUND,
-  ERROR_INSUFFICIENT_BALANCE,
 } from './constants';
 import { StoreEntity } from '@/database/entities/store.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  CancellationWithoutRefund,
+  CancellationWithRefund,
+} from './orders.strategy';
 
 @Injectable()
 export class OrdersService {
@@ -28,27 +30,17 @@ export class OrdersService {
   async cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
     const order = await this.ordersRepository.findOneBy({ id });
     if (!order) throw new Error(ERROR_ORDER_NOT_FOUND);
-    if (!this.isEligibleForCancellation(order))
-      throw new Error(ERROR_ORDER_NOT_ELIGIBLE);
+    this.checkEligibleForCancellation(order);
+    const strategy = refund
+      ? new CancellationWithRefund(this.ordersRepository, this.storesRepository)
+      : new CancellationWithoutRefund(this.ordersRepository);
 
-    if (refund) await this.processRefund(order);
-
-    await this.ordersRepository.update(id, { status: ORDER_STATUS_CANCELLED });
+    await strategy.cancel(order);
     return order;
   }
 
-  private async processRefund(order: OrderEntity) {
-    const store = await this.storesRepository.findOneBy({ id: order.store_id });
-    if (!store) throw new Error(ERROR_STORE_NOT_FOUND);
-    if (store.balance_cents < order.amount_cents)
-      throw new Error(ERROR_INSUFFICIENT_BALANCE);
-
-    await this.storesRepository.update(store.id, {
-      balance_cents: store.balance_cents - order.amount_cents,
-    });
-  }
-
-  private isEligibleForCancellation(order: OrderEntity): boolean {
-    return order.status !== ORDER_STATUS_CANCELLED;
+  private checkEligibleForCancellation(order: OrderEntity) {
+    if (order.status === ORDER_STATUS_CANCELLED)
+      throw new Error(ERROR_ORDER_NOT_ELIGIBLE);
   }
 }
