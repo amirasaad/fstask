@@ -64,7 +64,10 @@ describe('OrdersController', () => {
 
     describe('cancelOrder', () => {
       it('should delete without refund', async () => {
-        mockOrderRepository.findOneBy.mockResolvedValue({ id: 1 });
+        mockOrderRepository.findOneBy.mockResolvedValue({
+          id: 1,
+          status: 'pendingPayment',
+        });
         expect(await ordersController.cancelOrder(1, { refund: false }));
       });
     });

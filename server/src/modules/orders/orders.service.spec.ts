@@ -41,11 +41,13 @@ describe('OrdersService', () => {
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);
+    mockStoreRepository.findOneBy.mockClear();
+    mockOrderRepository.findOneBy.mockClear();
   });
 
   describe('cancelOrder', () => {
     it('should delete order with no refund', async () => {
-      const mockOrder = { id: 1 };
+      const mockOrder = { id: 1, status: 'pendingPayment' };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       const result = await service.cancelOrder(1, false);
       mockOrderRepository.update.mockResolvedValue({ affected: 1, raw: {} });
@@ -56,7 +58,12 @@ describe('OrdersService', () => {
     });
 
     it('should delete order with refund and available balance', async () => {
-      const mockOrder = { id: 1, store_id: 1, amount_cents: 100 };
+      const mockOrder = {
+        id: 1,
+        store_id: 1,
+        amount_cents: 100,
+        status: 'pendingPayment',
+      };
       const mockStore = { id: 1, balance_cents: 100 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       mockStoreRepository.findOneBy.mockResolvedValue(mockStore);
@@ -73,7 +80,12 @@ describe('OrdersService', () => {
     });
 
     it('should throw Insufficient balance error if store balance is not enough', async () => {
-      const mockOrder = { id: 1, store_id: 1, amount_cents: 100 };
+      const mockOrder = {
+        id: 1,
+        store_id: 1,
+        amount_cents: 100,
+        status: 'pendingPayment',
+      };
       const mockStore = { id: 1, balance_cents: 50 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       mockStoreRepository.findOneBy.mockResolvedValue(mockStore);
@@ -82,11 +94,29 @@ describe('OrdersService', () => {
       );
     });
   });
-  it('should throw Order aready Cancelled if order status is already cancelled', async () => {
+  it('should handle error order not found', async () => {
+    mockOrderRepository.findOneBy.mockResolvedValue(null);
+    await expect(service.cancelOrder(1, false)).rejects.toThrow(
+      'Order not found',
+    );
+    expect(mockOrderRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+  });
+
+  it('should handle error store not found', async () => {
+    const mockOrder = { id: 1, store_id: 1, status: 'pendingPayment' };
+    mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
+    mockStoreRepository.findOneBy.mockResolvedValue(null);
+    await expect(service.cancelOrder(1, true)).rejects.toThrow(
+      'Store not found',
+    );
+    expect(mockOrderRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    expect(mockStoreRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+  });
+  it('should throw Order not eligible for cancellation if order status is already cancelled', async () => {
     const mockOrder = { id: 1, status: 'cancelled' };
     mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
     await expect(service.cancelOrder(1, false)).rejects.toThrow(
-      'Order already cancelled',
+      'Order not eligible for cancellation',
     );
   });
 });

@@ -23,8 +23,8 @@ export class OrdersService {
   async cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
     const order = await this.ordersRepository.findOneBy({ id });
     if (!order) throw new Error('Order not found');
-    if (order.status === 'cancelled')
-      throw new Error('Order already cancelled');
+    if (!this.isEligibleForCancellation(order))
+      throw new Error('Order not eligible for cancellation');
 
     if (refund) {
       await this.processRefund(order);
@@ -43,5 +43,10 @@ export class OrdersService {
     await this.storesRepository.update(store.id, {
       balance_cents: store.balance_cents - order.amount_cents,
     });
+  }
+
+  private isEligibleForCancellation(order: OrderEntity): boolean {
+    console.log(`order status: ${order.status}`);
+    return order.status !== 'cancelled';
   }
 }
