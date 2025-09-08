@@ -13,7 +13,7 @@ export interface ErrorResponse {
   message?: string;
 }
 
-const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+const SERVER_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -33,12 +33,13 @@ export function useOrders() {
       if (!data.ok) {
         throw new Error(`HTTP error! status: ${data.status}`);
       }
-      const json = await data.json();
+      const json = (await data.json()) as Order[];
       setOrders(json);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch orders:", err);
       setError(
-        err.message || "An unknown error occurred while fetching orders."
+        (err as Error).message ||
+          "An unknown error occurred while fetching orders."
       );
     } finally {
       setLoading(false);
@@ -72,10 +73,11 @@ export function useOrders() {
         // Refresh the orders list after successful cancellation
         await fetchOrders();
         return true; // Indicate success
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to cancel order:", err);
         setError(
-          err.message || "An unknown error occurred during cancellation."
+          (err as Error).message ||
+            "An unknown error occurred during cancellation."
         );
         return false; // Indicate failure
       }
@@ -100,9 +102,12 @@ export function useOrders() {
       if (success) {
         closeModal();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to confirm cancellation:", err);
-      setError(err.message || "An unknown error occurred during confirmation.");
+      setError(
+        (err as Error).message ||
+          "An unknown error occurred during confirmation."
+      );
     }
   }
 

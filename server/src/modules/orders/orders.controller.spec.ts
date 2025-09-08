@@ -71,6 +71,15 @@ describe('OrdersController', () => {
         });
         expect(await ordersController.cancelOrder(1, { refund: false }));
       });
+
+      it('should handle errors gracefully', async () => {
+        mockOrderRepository.findOneBy.mockRejectedValue(
+          new Error('Database error'),
+        );
+        await expect(
+          ordersController.cancelOrder(1, { refund: false }),
+        ).rejects.toThrow();
+      });
     });
   });
 });
