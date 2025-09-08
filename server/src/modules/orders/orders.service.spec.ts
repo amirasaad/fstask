@@ -82,4 +82,11 @@ describe('OrdersService', () => {
       );
     });
   });
+  it('should throw Order aready Cancelled if order status is already cancelled', async () => {
+    const mockOrder = { id: 1, status: 'cancelled' };
+    mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
+    await expect(service.cancelOrder(1, false)).rejects.toThrow(
+      'Order already cancelled',
+    );
+  });
 });
