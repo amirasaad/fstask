@@ -3,6 +3,7 @@ import { OrderEntity } from '@/database/entities/order.entity';
 
 export const ordersFixture: Partial<OrderEntity>[] = [
   {
+    id: 1,
     store_id: 1,
     customer_id: 1,
     status: 'confirmed',
@@ -11,7 +12,8 @@ export const ordersFixture: Partial<OrderEntity>[] = [
     updated_at: new Date('2024-01-01T10:00:00Z'),
   },
   {
-    store_id: 1,
+    id: 2,
+    store_id: 2,
     customer_id: 2,
     status: 'pendingPayment',
     amount_cents: 2500,

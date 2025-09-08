@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { StoreEntity } from './store.entity';
+import { CustomerEntity } from './customer.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
@@ -22,4 +31,12 @@ export class OrderEntity {
 
   @Column({ type: 'datetime' })
   updated_at: Date;
+
+  @ManyToOne(() => StoreEntity, (store) => store.orders)
+  @JoinColumn({ name: 'store_id' })
+  store: StoreEntity;
+
+  @ManyToOne(() => CustomerEntity, (customer) => customer.orders)
+  @JoinColumn({ name: 'customer_id' })
+  customer: CustomerEntity;
 }

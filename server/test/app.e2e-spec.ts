@@ -7,6 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity } from '@/database/entities/order.entity';
 import { DataSource } from 'typeorm';
 import { seedOrders, clearOrders } from './fixtures/orders';
+import { clearCustomers, seedCustomers } from './fixtures/customers';
+import { clearStores, seedStores } from './fixtures/stores';
+import { CustomerEntity } from '@/database/entities/customer.entity';
+import { StoreEntity } from '@/database/entities/store.entity';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -18,7 +22,7 @@ describe('AppController (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [OrderEntity],
+          entities: [OrderEntity, CustomerEntity, StoreEntity],
           synchronize: true,
           logging: false,
         }),
@@ -29,16 +33,32 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     dataSource = app.get<DataSource>(DataSource);
+    await seedCustomers(dataSource);
+    await seedStores(dataSource);
     await seedOrders(dataSource);
   });
 
   afterEach(async () => {
-    if (dataSource) await clearOrders(dataSource);
+    if (dataSource) {
+      await clearOrders(dataSource);
+      await clearCustomers(dataSource);
+      await clearStores(dataSource);
+    }
     if (app) await app.close();
   });
 
   it('/orders/ (GET)', () => {
-    return request(app.getHttpServer()).get('/orders').expect(200);
+    return request(app.getHttpServer())
+      .get('/orders')
+      .expect(200)
+      .then((res) => {
+        const body = res.body as any[];
+        expect(Array.isArray(body)).toBe(true);
+        body.forEach((order: Partial<OrderEntity>) => {
+          expect(order).toHaveProperty('store');
+          expect(order.store).toHaveProperty('name');
+        });
+      });
   });
   it('/orders/{id} (DELETE)', () => {
     return request(app.getHttpServer())
