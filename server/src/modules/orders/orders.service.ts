@@ -28,7 +28,7 @@ export class OrdersService {
       await this.processRefund(order);
     }
 
-    await this.ordersRepository.delete({ id });
+    await this.ordersRepository.update(id, { status: 'cancelled' });
     return order;
   }
 

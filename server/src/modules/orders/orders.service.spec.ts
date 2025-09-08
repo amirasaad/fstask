@@ -11,7 +11,7 @@ describe('OrdersService', () => {
   const mockOrderRepository = {
     findOneBy: jest.fn(),
     save: jest.fn(),
-    delete: jest.fn(),
+    update: jest.fn(),
   };
   const mockStoreRepository = {
     findOneBy: jest.fn(),
@@ -48,8 +48,10 @@ describe('OrdersService', () => {
       const mockOrder = { id: 1 };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       const result = await service.cancelOrder(1, false);
-      mockOrderRepository.delete.mockResolvedValue({ affected: 1, raw: {} });
-      expect(mockOrderRepository.delete).toHaveBeenCalledWith({ id: 1 });
+      mockOrderRepository.update.mockResolvedValue({ affected: 1, raw: {} });
+      expect(mockOrderRepository.update).toHaveBeenCalledWith(1, {
+        status: 'cancelled',
+      });
       expect(result).toEqual(mockOrder);
     });
 
@@ -59,8 +61,10 @@ describe('OrdersService', () => {
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       mockStoreRepository.findOneBy.mockResolvedValue(mockStore);
       const result = await service.cancelOrder(1, true);
-      mockOrderRepository.delete.mockResolvedValue({ affected: 1, raw: {} });
-      expect(mockOrderRepository.delete).toHaveBeenCalledWith({ id: 1 });
+      mockOrderRepository.update.mockResolvedValue({ affected: 1, raw: {} });
+      expect(mockOrderRepository.update).toHaveBeenCalledWith(1, {
+        status: 'cancelled',
+      });
       expect(mockStoreRepository.update).toHaveBeenCalledWith(1, {
         balance_cents: mockStore.balance_cents - mockOrder.amount_cents,
       });

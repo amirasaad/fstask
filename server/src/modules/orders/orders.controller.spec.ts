@@ -12,7 +12,7 @@ describe('OrdersController', () => {
   const mockOrderRepository = {
     findOneBy: jest.fn(),
     find: jest.fn(),
-    delete: jest.fn(),
+    update: jest.fn(),
   };
 
   const mockStoreRepository = {
