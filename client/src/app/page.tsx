@@ -1,7 +1,7 @@
 "use client";
-
-export default function OrdersPage() {
-  // Implement load orders from api
+export default async function OrdersPage() {
+  const data = await fetch("http://localhost:4000/orders");
+  const orders = await data.json();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,14 +50,48 @@ export default function OrdersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {/* Implement orders rendering here */}
-                <tr className="hover:bg-gray-50">
-                  <td colSpan={7}>
-                    <div className="flex justify-center items-center h-full">
-                      Implement orders rendering here
-                    </div>
-                  </td>
-                </tr>
+                {orders.map((order: any) => (
+                  <tr className="hover:bg-gray-50">
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.id}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.customer.name}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.store.name}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.amount_cents}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.status}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        {order.created_at}
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="flex justify-center items-center h-full">
+                        <button className="rounded-md bg-red-600 px-2.5 py-1.5 text-sm font-semibold text-white hover:bg-red-700">
+                          Cancel
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
