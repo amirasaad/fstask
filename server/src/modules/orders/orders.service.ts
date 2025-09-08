@@ -35,7 +35,6 @@ export class OrdersService {
       if (store.balance_cents < order.amount_cents) {
         throw new Error('Insufficient balance');
       }
-      await this.ordersRepository.delete({ id });
       await this.storesRepository.update(store.id, {
         balance_cents: store.balance_cents - order.amount_cents,
       });
