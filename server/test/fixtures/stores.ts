@@ -12,7 +12,7 @@ export const storesFixture: Partial<StoreEntity>[] = [
   {
     id: 2,
     name: 'Test store 2',
-    balance_cents: 2500,
+    balance_cents: 0,
     created_at: new Date('2024-02-01T12:00:00Z'),
     updated_at: new Date('2024-02-01T12:00:00Z'),
   },

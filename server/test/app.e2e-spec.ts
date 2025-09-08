@@ -67,11 +67,28 @@ describe('AppController (e2e)', () => {
         .send({ refund: true })
         .expect(200);
     });
-    it('/orders/{id} (DELETE)', () => {
+    it('should cancel order without refund', () => {
       return request(app.getHttpServer())
-        .delete('/orders/1')
-        .send({ refund: true })
+        .delete('/orders/2')
+        .send({ refund: false })
         .expect(200);
+    });
+
+    // Return 422 for non-existent orders to avoid revealing order existence for security.
+
+    it('should return 422 for non-existent order', () => {
+      return request(app.getHttpServer())
+        .delete('/orders/999') // Assuming 999 does not exist
+        .send({ refund: false })
+        .expect(422);
+    });
+
+    it('should return 422 for insufficient balance', async () => {
+      // store #2 in fixtures has zero balance.
+      await request(app.getHttpServer())
+        .delete('/orders/2')
+        .send({ refund: true })
+        .expect(422);
     });
   });
 });
