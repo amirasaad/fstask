@@ -1,6 +1,6 @@
-export const ORDER_STATUS_CANCELLED = 'cancelled' as const;
-export const ORDER_STATUS_PENDING = 'pendingPayment' as const;
-export const ORDER_STATUS_CONFIRMED = 'confirmed' as const;
+export const ORDER_STATUS_CANCELLED = 'CANCELLED' as const;
+export const ORDER_STATUS_PENDING = 'PENDINGPAYMENT' as const;
+export const ORDER_STATUS_CONFIRMED = 'CONFIRMED' as const;
 
 export const ORDER_RELATIONS = ['store', 'customer'] as const;
 

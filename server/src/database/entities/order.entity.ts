@@ -20,8 +20,8 @@ export class OrderEntity {
   @Column({ type: 'int' })
   customer_id: number;
 
-  @Column({ type: 'text', default: 'pendingPayment' })
-  status: 'pendingPayment' | 'confirmed' | 'cancelled';
+  @Column({ type: 'text', default: 'PENDINGPAYMENT' })
+  status: 'PENDINGPAYMENT' | 'CONFIRMED' | 'CANCELLED';
 
   @Column({ type: 'int' })
   amount_cents: number;

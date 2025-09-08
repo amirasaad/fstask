@@ -60,10 +60,18 @@ describe('AppController (e2e)', () => {
         });
       });
   });
-  it('/orders/{id} (DELETE)', () => {
-    return request(app.getHttpServer())
-      .delete('/orders/1')
-      .send({ refund: true })
-      .expect(200);
+  describe('/orders/{id} (DELETE)', () => {
+    it('cancel order with refund', () => {
+      return request(app.getHttpServer())
+        .delete('/orders/1')
+        .send({ refund: true })
+        .expect(200);
+    });
+    it('/orders/{id} (DELETE)', () => {
+      return request(app.getHttpServer())
+        .delete('/orders/1')
+        .send({ refund: true })
+        .expect(200);
+    });
   });
 });

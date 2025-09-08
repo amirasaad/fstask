@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { OrderEntity } from '@/database/entities/order.entity';
 import {
@@ -16,6 +16,8 @@ import {
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
+
   constructor(
     @InjectRepository(OrderEntity)
     private ordersRepository: Repository<OrderEntity>,
@@ -28,7 +30,9 @@ export class OrdersService {
   }
 
   async cancelOrder(id: number, refund: boolean): Promise<OrderEntity | null> {
+    this.logger.log(`Canceling order with refund: ${refund}`, id);
     const order = await this.ordersRepository.findOneBy({ id });
+    this.logger.log(`order: ${order?.status}`);
     if (!order) throw new Error(ERROR_ORDER_NOT_FOUND);
     this.checkEligibleForCancellation(order);
     const strategy = refund
