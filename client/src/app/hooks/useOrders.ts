@@ -13,7 +13,7 @@ export interface ErrorResponse {
   message?: string;
 }
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);

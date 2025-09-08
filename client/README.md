@@ -8,15 +8,21 @@
 npm install
 ```
 
-2. Run the development server:
+2. Copy .env
+
+```bash
+cp .env.dist .env
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) to view the application.
+4. Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Frontend Requirements:
+## Frontend Requirements
 
 1. **Load Orders List**
 
