@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { OrderEntity } from '@/database/entities/order.entity';
 import {
   ORDER_RELATIONS,
-  ORDER_STATUS_CANCELLED,
+  ORDER_STATUS_ELIGIBLE_FOR_CANCELLATION,
   ERROR_ORDER_NOT_FOUND,
   ERROR_ORDER_NOT_ELIGIBLE,
 } from './constants';
@@ -40,7 +40,11 @@ export class OrdersService {
   }
 
   private checkEligibleForCancellation(order: OrderEntity) {
-    if (order.status === ORDER_STATUS_CANCELLED)
+    if (
+      !ORDER_STATUS_ELIGIBLE_FOR_CANCELLATION.includes(
+        order.status as (typeof ORDER_STATUS_ELIGIBLE_FOR_CANCELLATION)[number],
+      )
+    )
       throw new Error(ERROR_ORDER_NOT_ELIGIBLE);
   }
 }

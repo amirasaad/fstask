@@ -63,7 +63,7 @@ describe('OrdersController', () => {
     });
 
     describe('cancelOrder', () => {
-      it('should delete without refund', async () => {
+      it('should cancel without refund', async () => {
         mockOrderRepository.findOneBy.mockResolvedValue({
           id: 1,
           status: 'pendingPayment',

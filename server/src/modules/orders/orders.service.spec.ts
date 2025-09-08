@@ -54,7 +54,7 @@ describe('OrdersService', () => {
   });
 
   describe('cancelOrder', () => {
-    it('should delete order with no refund', async () => {
+    it('should cancel order with no refund', async () => {
       const mockOrder = { id: 1, status: ORDER_STATUS_PENDING };
       mockOrderRepository.findOneBy.mockResolvedValue(mockOrder);
       const result = await service.cancelOrder(1, false);
@@ -65,7 +65,7 @@ describe('OrdersService', () => {
       expect(result).toEqual(mockOrder);
     });
 
-    it('should delete order with refund and available balance', async () => {
+    it('should cancel order with refund and available balance', async () => {
       const mockOrder = {
         id: 1,
         store_id: 1,
