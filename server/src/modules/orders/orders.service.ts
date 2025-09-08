@@ -11,13 +11,10 @@ import {
 } from './constants';
 import { StoreEntity } from '@/database/entities/store.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomerEntity } from '@/database/entities/customer.entity';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(CustomerEntity)
-    private customersRepository: Repository<CustomerEntity>,
     @InjectRepository(OrderEntity)
     private ordersRepository: Repository<OrderEntity>,
     @InjectRepository(StoreEntity)
