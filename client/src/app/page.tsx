@@ -1,8 +1,7 @@
 "use client";
-import React from "react";
+import CancelOrderModal from "./components/CancelOrderModal";
 import OrdersTable from "./components/OrdersTable";
 import { useOrders } from "./hooks/useOrders";
-import CancelOrderModal from "./components/CancelOrderModal";
 
 export default function OrdersPage() {
   const {

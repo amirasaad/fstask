@@ -1,5 +1,5 @@
-import React from "react";
-import { Order } from "../hooks/useOrders";
+import type React from "react";
+import type { Order } from "../hooks/useOrders";
 
 interface CancelOrderModalProps {
   isOpen: boolean;
@@ -28,18 +28,21 @@ const CancelOrderModal: React.FC<CancelOrderModalProps> = ({
         {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
         <div className="flex justify-end space-x-4">
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
           >
             Back
           </button>
           <button
+            type="button"
             onClick={() => onConfirm(true)}
             className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
           >
             Cancel with refund
           </button>
           <button
+            type="button"
             onClick={() => onConfirm(false)}
             className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
           >

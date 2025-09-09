@@ -6,9 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
-    "test": "eslint ."
+    "lint": "biome check",
+    "lint:fix": "biome lint --write",
+    "format": "biome format --write",
+    "test": "biome ci "
   },
   "dependencies": {
     "next": "15.5.2",
@@ -16,6 +17,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.3",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.35.0",
     "@types/node": "^20.19.13",
