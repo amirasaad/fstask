@@ -1,5 +1,5 @@
 // components/OrdersTable.tsx
-import React from 'react';
+import type React from "react";
 
 interface Order {
   id: number;
@@ -16,7 +16,11 @@ interface OrdersTableProps {
   loading: boolean;
 }
 
-const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onCancel, loading }) => {
+const OrdersTable: React.FC<OrdersTableProps> = ({
+  orders,
+  onCancel,
+  loading,
+}) => {
   return (
     <div className="bg-white shadow-sm rounded-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -100,6 +104,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ orders, onCancel, loading }) 
                   <td>
                     <div className="flex justify-center items-center h-full">
                       <button
+                        type="button"
                         onClick={() => onCancel(order)}
                         className="rounded-md bg-red-600 px-2.5 py-1.5 text-sm font-semibold text-white hover:bg-red-700"
                       >

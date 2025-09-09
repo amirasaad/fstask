@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface Order {
   id: number;
@@ -39,7 +39,7 @@ export function useOrders() {
       console.error("Failed to fetch orders:", err);
       setError(
         (err as Error).message ||
-          "An unknown error occurred while fetching orders."
+          "An unknown error occurred while fetching orders.",
       );
     } finally {
       setLoading(false);
@@ -67,7 +67,7 @@ export function useOrders() {
         if (!res.ok) {
           const errorBody: ErrorResponse = await res.json();
           throw new Error(
-            `Failed to cancel order: ${errorBody.message ?? res.statusText}`
+            `Failed to cancel order: ${errorBody.message ?? res.statusText}`,
           );
         }
         // Refresh the orders list after successful cancellation
@@ -77,12 +77,12 @@ export function useOrders() {
         console.error("Failed to cancel order:", err);
         setError(
           (err as Error).message ||
-            "An unknown error occurred during cancellation."
+            "An unknown error occurred during cancellation.",
         );
         return false; // Indicate failure
       }
     },
-    [fetchOrders]
+    [fetchOrders],
   );
 
   function openCancelModal(order: Order) {
@@ -106,7 +106,7 @@ export function useOrders() {
       console.error("Failed to confirm cancellation:", err);
       setError(
         (err as Error).message ||
-          "An unknown error occurred during confirmation."
+          "An unknown error occurred during confirmation.",
       );
     }
   }
